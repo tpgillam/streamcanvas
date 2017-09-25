@@ -1,0 +1,8 @@
+* Remove local pyqtgraph dependency
+* Alternative link / alias to streamcanvas to allow more convenient running
+* Do we want a mode where the gobbler only returns completed frames?
+* Exit is very non-graceful
+* Gobbling is quite slow. It could probably be made faster by only stripping out comments, noticing strings,
+  and not matching brackets. A larger buffer may help too, if it can be dealt with sensibly.
+* Switch to using python logging package
+

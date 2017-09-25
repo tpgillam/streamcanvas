@@ -1,0 +1,92 @@
+# Everything from a #-symbol to the end of line is ignored as comment.
+
+# Except inside quoted strings, white space of any kind and in any amount (including line breaks) may be used to separate numerical arguments.  White space is the primary separator, but there are places where it would be good if parsers need not require it (such as between command names and arguemnts to commands).
+
+
+# a 2D line having n-vertices starting at (x1,y1), going to (x2,y2), then to (x3,y3), and terminating at (x4,y4) might be denoted `line [ x1 y1 x2 y2 x3 y3 x4 y4 ]' (but with x1 etc all replaced by actual numbers:
+
+
+# So a unit square might be drawn thus:
+
+line [ 0 0   0 1   1 1    1 0   0 0 ]
+
+# The token "close" could be be used to avoid repeating the initial co-ordinate when drawing a closed object thus:
+
+line [ 0 0   0 1   1 1    1 0   close ]
+
+# Note the brackets [ ] above are primarily to allow for arguments that could be of variable length.  A primitive for drawing a cicle might always expect only three arguments (i.e. centreX, centreY and radius) so need not need [ ] :
+
+# circle 0 0   1       #  Unit circle centred on origin.
+
+# however this could make it harder to add  "optional" parameters later.  For example, suppose there was a polygon command such as this:
+
+# polygon 0 0 1 8  # Polygon, centred on 0,0 circumradius 1, sides 8 (octogon)
+
+# ... and suppose that it was later noted that not all radius 1 octagons are the same.  An octagon can be rotated so as to have the x-axis being a line of symmetry passing through corners, OR can be rotated to have the x-axis being a line of symmetry passing through the centres of edges. perhaps someone wants to implement that like this:
+
+# polygon 0 0 1 8 0.1 # Polygon, centred on 0,0 circumradius 1, sides 8 (octogon) with rotation angle 0.1 radians
+
+# then this is not drawable after the arrival of 0 0 1 8 as the gobbler doesn't know whether an angle will come or not.  So perhasp all commands  should have brackets whether they anticipate needing them or not:
+
+circle  [ 0 0 1 ]
+polygon [ 0 0 1 8     ] # Standard polygon 
+polygon [ 0 0 1 8 0.1 ] # Rotated  polygon 
+
+# ... however I can imagine those brackets being annoying to have to insert into the streams.  Not shure what is best here. 
+
+# White space in certain places looks like it ought to be optional, eg, these don't seem to be unparseable:
+
+circle[0 0 1]
+polygon[0 0 1 8]#Standard polygon 
+polygon[0 0 1 8 0.1]#Rotated polygon 
+
+# Even the following looks OK to me:
+
+circle[0 0 1]polygon[0 0 1 8]polygon[0 0 1 8 0.1]
+
+# 3D variants of primitives could be indicated by appending 3d to the name.  E.g. this is a line from (0,0,0) to (1,1,1):
+
+line3d(0 0 0 1 1 1)
+
+# Points are important things to be able to plot, both as single-pixel sized objects, and as finite-sized blobs, or for that matter even as fancy symbols:
+
+point(0,0)   # pixel-point at origin
+point(0,0,10)   # size10-point at origin ... a bit like a filled circle but notionally different
+fancypoint(0,0,star) # fancy star-style point at the origin
+fancypoint(0,0,box) # fancy box-style point at the origin
+fancypoint(0,0,6) # fancy point number 6 at the origin (perhaps 0,1,2,3,4,5,6, iterate over blob, box, ..., star,  etc?
+
+# Arguably any brackets [] or () or {} or <> ought to work just as well as any other, so long as they match:
+
+point(0,0)   # pixel-point at origin
+point{0,0}   # pixel-point at origin
+point[0,0]   # pixel-point at origin
+point<0,0>   # pixel-point at origin
+
+# Danger of demanding brackets for commands, to allow for future flexibility of arguments, means that, annoyingly, even no-arg cmmands might find themselves needing them:
+
+approve[]
+
+vs
+
+# approve
+
+# There ought to be a means to communicate start-up args via std in as well as via the command line (something hist doesn't have but has long needed)
+
+args[ lx 10 uy 4 dropping live ]
+
+# How should frames be delimited ? Should they have an "approve" at the end? Should they just be in a frame[] or even just a [] of their own?  That's annoying if there is only ever going to be one frame, that is constructed on the fly and drawn forever, forever being added to. Given that I think having an end-of-frame keyword (such as "approve" or "end-of-frame" is probably better than a delimieter.  That way it never has to be given if there is never more than one frame.  On the
+# other hand, one could simply make 'frame[ stuff ] frame[ stuff ]' and 'stuff approve stugff approve stuff' both legitimate ways of sending frame data (at the cost of a reserved word 'approve' in the interest of allowing simplicity for single frame buffers.
+
+
+# There should be basic view-port primitives coming via the stream:
+
+ux[4] uy[3]
+
+# ... though whether the viewer would pay attention to them would depend on whether it was in a "let command line args trump stream args" or "let stream args trump command line args" mode.  Presumably there ought ot be a command-line-only argument that could set which is the more powerful ... the command line args or the stream args.  Presumably the default would be to accept command line args over stream args, and there would even be a command line arg to prevent processing of
+# viewport/cosmetic related stream args.
+
+# Setting colour is needed from time to time:
+
+colour[1 1 0] # Set yellow as pen colour in rgb format
+colour[0xffff00] # Set yellow as pen colour in hex format

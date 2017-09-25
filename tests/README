@@ -1,0 +1,19 @@
+Thoughts:
+
+* Asyncio lets you switch between tasks (e.g. reading & rendering) efficiently, but since it's single threaded you are
+exerting back pressure at an increasing rate as there is more work to be done in the thread
+
+* We *are* allowed to drop frames - and a given frame probably doesn't have too much information in it. Therefore:
+
+  1) The process we initially start should continuosly poll for data on stdin
+
+  2) There should be a second process (spawned from the first) which handles the GUI and drawing. We need a line of
+     communication between it and 1). STDIN would be fine. 1) forwards the text that it is getting from global STDIN,
+     up until the end of the frame. It then locally caches frames, and discards the old as soon as a new one is
+     complete. When 2) is done rendering the frame, it will send a request to 1) for the next frame, at which point
+     whichever frame is now available will be rendered. [If 2) wants to be double buffered, it just requests frames
+     from 1) at the appropriate time]
+
+
+* We cannot use threads in python, we have the same back-pressure problem.
+

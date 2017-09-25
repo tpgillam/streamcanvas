@@ -1,0 +1,3 @@
+The passat.stream example was made like this:
+
+cat passat.csv | tail +8 | tr , ' ' | gawk '{print "pen[rpm",$1,$2,"]"; print "pen[desiredMAP",$1,$3,"]"; print "pen[actualMAP",$1,$4,"]"; print "pen[N75DutyCycle",$1,$5,"]" }' > passat.stream
