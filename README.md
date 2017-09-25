@@ -4,3 +4,6 @@ possible, with frames being dropped as necessary.
 
 It is currently in the early stages of development.
 
+Requirements:
+
+* pyqtgraph
