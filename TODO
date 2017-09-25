@@ -1,4 +1,3 @@
-* Remove local pyqtgraph dependency
 * Alternative link / alias to streamcanvas to allow more convenient running
 * Do we want a mode where the gobbler only returns completed frames?
 * Exit is very non-graceful
